@@ -4,15 +4,17 @@
 #include <locale.h>
 /*
 Banco de horas para empresa Divina velas;
-Feito por AndrÈ Melo Dantas Filho;
-Data final:28/05/2021;
+Feito por Andr√© Melo Dantas Filho;
+Data final:17/06/2021;
 */
 struct lista{
     char nome[50];
     int saldo;
 };
-struct lista funcionarios[20];
+struct lista funcionarios[30];
 FILE *saldos;
+FILE *funcionario;
+
 int qtdfuncionarios=1;
 
 void todosfuncionarios();
@@ -29,6 +31,12 @@ void lersaldos();
 
 void armazenarsaldos();
 
+int verificavariavel();
+
+int lerfuncionarios();
+
+
+
 int main(){
     printf(
            "==================================================\n"
@@ -37,61 +45,31 @@ int main(){
            );
     setlocale(LC_ALL,"");
 
-    strcpy(funcionarios[qtdfuncionarios].nome,"Alisson Junior");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Osnir");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Edjane");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Janaina");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Althanir");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Tiago");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Elisama");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Willian");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Djackson");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"D.Izabel");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Michel");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Leandro");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Leandro da silva(LÈo)");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Fabio");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Lucas");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Jocaff");
-    qtdfuncionarios++;
-    strcpy(funcionarios[qtdfuncionarios].nome,"Alexandre");
-    qtdfuncionarios++;
 
 
-    lersaldos(qtdfuncionarios);//funÁ„o para ler saldos em arquivos
+
 
     int opcao=0;
-    while (opcao!=4){
+    while (opcao!=5){
+        qtdfuncionarios=lerfuncionarios();//fun√ß√£o para ler funcion√°rios em arquivos
+        lersaldos(qtdfuncionarios);//fun√ß√£o para ler saldos em arquivos
         system("pause");
         system("cls");
         printf(
                 "\n1-Registrar horas\n"
                 "2-Adicionar ou remover horas diretamente ao saldo\n"
-                "3-Ver saldo funcion·rios\n"
-                "4-Armazenar dados e Encerrar programa\n"
-                "\nEscolha uma opÁ„o:"
+                "3-Ver saldo funcion√°rios\n"
+                "4-Armazenar dados\n"
+                "5-Encerrar programa\n"
+                "\nEscolha uma op√ß√£o:"
                );
-        scanf(" %d",&opcao);
 
-        if (opcao>4 || opcao<1){
-            printf("\nOpÁ„o inexistente\n");
+        opcao=verificavariavel();
+
+        if (opcao>5 || opcao<1){
+            printf("\nOp√ß√£o inexistente\n");
             continue;
-            //scanf(" %d",&opcao);
+
         }
         else if(opcao==1){
             todosfuncionarios();
@@ -100,8 +78,8 @@ int main(){
 
         }
         else if(opcao==2){
-                todosfuncionarios(qtdfuncionarios);
-                diretosaldo(qtdfuncionarios);
+            todosfuncionarios(qtdfuncionarios);
+            diretosaldo(qtdfuncionarios);
             //funcao adicionar ou remover horas do saldo diretamente
 
         }
@@ -110,17 +88,45 @@ int main(){
             versaldo(qtdfuncionarios);
             //funcao para ver saldo de horas funcionarios
         }
+        else if(opcao==4){
+            armazenarsaldos(qtdfuncionarios);//fun√ß√£o para armazenar os saldos em arquivos.
+            printf("Dados armazenados com sucesso!\n");
+        }
     }
-    armazenarsaldos(qtdfuncionarios);//funÁ„o para armazenar os saldos em arquivos.
 
 
+    printf("\nPrograma encerrado!\n");
     return 0;
+}
+
+int verificavariavel(){//Fun√ß√£o feita para scanf s√≥ aceitar numeros inteiros.
+    char variavel[50];
+    bool a=false,invalido=false;
+    int i=0,retorno;
+    while(a==false){
+        invalido=false;
+        scanf(" %[^\n]s",variavel);
+        for (i=0;i<strlen(variavel);i++){
+            if (variavel[i]>='0' && variavel[i]<='9'){
+
+
+            }else invalido=true;
+        }
+        if (invalido==true){
+            printf("S√≥ √© permitido digitar n√∫meros\nDigite novamente:\n");
+        }else if (invalido==false){
+            retorno = atoi(variavel);
+            a=true;
+        }
+    }
+    return retorno;
+
 }
 
 void todosfuncionarios(){
     int i;
     for (i=1;i<qtdfuncionarios;i++){
-        //printf("%s #%d\n",funcionarios[i].nome,i);
+
         printf("%d-%s\n",i,funcionarios[i].nome);
     }
 
@@ -131,19 +137,20 @@ void registrarhoras(){
         int codigo_funcionario,saldo=0,confirma;
         int h_inicial,h_final,h_intervalo;
         printf("\nDeseja registrar horas de qual funcionario, insira o codigo:\n");
-        scanf(" %d",&codigo_funcionario);
+        codigo_funcionario=verificavariavel();
         printf("\n%s\n",funcionarios[codigo_funcionario].nome);
         printf("Horario inicial:");
-        scanf(" %d",&h_inicial);
+        h_inicial=verificavariavel();
         printf("Horario final:");
-        scanf(" %d",&h_final);
+        h_final=verificavariavel();
         printf("Hora(s) de intervalo:");
-        scanf(" %d",&h_intervalo);
+        h_intervalo=verificavariavel();
         saldo=(h_final-h_inicial-h_intervalo)-8;
 
         printf("Funcionario %s entrou na empresa de %d horas e saiu de %d horas, gerando um saldo de %d horas\n",funcionarios[codigo_funcionario].nome,h_inicial,h_final,saldo);
-        printf("Confirma essa informaÁ„o para adicionar ao sistema?(1.Sim | 2.N„o)\n");
-        scanf(" %d",&confirma);
+        printf("Confirma essa informa√ß√£o para adicionar ao sistema?(1.Sim | 2.N√£o)\n");
+
+        confirma=verificavariavel();
         if (confirma==1){
             funcionarios[codigo_funcionario].saldo+=saldo;
             printf("Saldo adicionado no sistema com sucesso!!\n");
@@ -158,21 +165,20 @@ void diretosaldo(){
     int saldodireto,codigo_funcionario;
     printf("Deseja adicionar ou remover saldo de qual funcionario:");
     printf("Para aplicar em todos, digite 0.\n");
-    scanf(" %d",&codigo_funcionario);
+    codigo_funcionario=verificavariavel();
     if (codigo_funcionario==0){
         printf("Quantas horas deseja adicionar/remover de todos:\n");
     }else{
         printf("Quantas horas deseja adicionar/remover de %s:\n",funcionarios[codigo_funcionario].nome);
     }
-
-    scanf(" %d",&saldodireto);
+    saldodireto=verificavariavel();
     int i;
     if (codigo_funcionario==0){
         if (saldodireto>0){
-                printf("Ser· adicionado %d horas de todos funcionarios que est„o devendo a Divina velas\n",saldodireto);
+                printf("Ser√° adicionado %d horas de todos funcionarios que est√£o devendo a Divina velas\n",saldodireto);
             }
             else if(saldodireto<0){
-                printf("Ser· removido %d horas de todos funcionarios que est„o devendo a Divina velas\n",saldodireto);
+                printf("Ser√° removido %d horas de todos funcionarios que est√£o devendo a Divina velas\n",saldodireto);
             }
 
         for (i=1;i<qtdfuncionarios;i++){
@@ -182,10 +188,10 @@ void diretosaldo(){
     else{
         funcionarios[codigo_funcionario].saldo+=saldodireto;
         if (saldodireto>0){
-            printf("Ser· adicionado %d horas ao saldo da(o) funcionaria(o) %s.\n",saldodireto,funcionarios[codigo_funcionario].nome);
+            printf("Ser√° adicionado %d horas ao saldo da(o) funcionaria(o) %s.\n",saldodireto,funcionarios[codigo_funcionario].nome);
         }
         else if(saldodireto<0){
-            printf("Ser· removido %d horas do saldo da(o) funcionaria(o) %s.\n",saldodireto,funcionarios[codigo_funcionario].nome);
+            printf("Ser√° removido %d horas do saldo da(o) funcionaria(o) %s.\n",saldodireto,funcionarios[codigo_funcionario].nome);
         }
     }
 
@@ -198,7 +204,8 @@ void versaldo(){
     int codigo_funcionario,i;
     printf("Deseja ver saldo de qual funcionario?\n");
     printf("Para ver de todos, digite 0.\n");
-    scanf(" %d",&codigo_funcionario);
+    codigo_funcionario=verificavariavel();
+
     if (codigo_funcionario==0){
             for (i=1;i<qtdfuncionarios;i++){
                 printf("%s:%d horas\n",funcionarios[i].nome,funcionarios[i].saldo);
@@ -227,3 +234,25 @@ void armazenarsaldos(){
     fclose(saldos);
 
 }
+
+int lerfuncionarios(){
+    int i=1;
+    funcionario = fopen("funcionarios.txt", "rt");
+    if (funcionario == NULL) {
+        printf("Arquivo n√£o encontrado!\nCriando arquivo...\n");
+        funcionario = fopen("funcionarios.txt", "w");
+        fclose(funcionario);
+        return 1;
+    }
+    for (i=1;i<18;i++){
+        fscanf(funcionario," %[^\n]s",&funcionarios[i].nome);
+        }
+    qtdfuncionarios=18;
+
+    fclose(funcionario);
+
+    return qtdfuncionarios;
+
+}
+
+
